@@ -12,6 +12,14 @@ This project was originally released on a Mercurial project back in 2014, on the
 The last release, v1.1, was built on Dec 12, 2013.
 
 
+# WARNING
+
+Please note that the java4k site has been taken over by a party that is not affiliated with the Java4k game contest, so any files downloaded from that site are not to be trusted. In order to encourage Internet safety, the binary launcher files are not available here.
+
+[Discussion about the domain take-over.](http://www.java-gaming.org/topics/urgent-announcement-about-java4k-com/38021/view.html)
+
+The launcher will attempt to download the files from that website and run them.
+
 
 ## Attributions
 
