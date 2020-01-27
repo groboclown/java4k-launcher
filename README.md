@@ -9,8 +9,6 @@ Java4k contests, regardless of whether Java is enabled in the browser or not.
 
 This project was originally released on a Mercurial project back in 2014, on the Pikacode site.  However, that site has gone dark.  In an effort to preserve the work done there, I've uploaded it here.
 
-The last release, v1.1, was built on Dec 12, 2013.
-
 
 # WARNING
 
