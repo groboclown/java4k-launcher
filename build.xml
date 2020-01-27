@@ -1,0 +1,222 @@
+<project name="tools4k" basedir="." default="main">
+    <property file="local.properties"/>
+
+    <fileset id="dist-libs" dir="lib">
+        <exclude name="junit-*" />
+        <exclude name="hamcrest-*" />
+
+        <!-- substance L&F -->
+        <include name="*.jar" />
+        <exclude name="tinylaf*" />
+
+        <!-- tinyLAF -->
+        <!--
+        <include name="tinylaf-*.jar" />
+        -->
+    </fileset>
+    <fileset id="dist-libs-extra" dir="lib">
+        <exclude name="junit-*" />
+        <exclude name="hamcrest-*" />
+        <exclude name="*.jar" />
+    </fileset>
+
+    <target name="all" depends="clean, main"
+            description="Clean, compile, and bundle the tool."/>
+    <target name="clean"
+            description="Delete all generated files.">
+        <delete dir="work"/>
+        <delete dir="exports"/>
+    </target>
+    <target name="main" depends="compile, jar, bundle"
+            description="Compile and bundle the tool."/>
+    <target name="compile"
+            description="Compile the code.">
+        <mkdir dir="work/classes"/>
+        <javac debug="true" includeJavaRuntime="true" includeAntRuntime="false"
+               fork="true" sourcepath="" srcdir="src"
+               destdir="work/classes">
+        </javac>
+        <copy todir="work/classes">
+            <fileset dir="resources" />
+        </copy>
+    </target>
+
+    <target name="load-cache" depends="assemble"
+            description="Download the java4k.com files used by the tool into the cache directory.">
+        <java dir="work/bundle"
+                classname="net.javagaming.java4k.launcher.cache.CachePopulator"
+                fork="true">
+            <sysproperty key="launcher.dir" value="." />
+            <classpath>
+                <fileset dir="work/bundle">
+                    <include name="java4klauncher.jar" />
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="save-cache" depends="save-cache-check" if="has.cachedir"
+            description="Bundle the existing cache directory into a distributable collection.">
+        <tar destfile="work/java4klauncher-cached-files.tar.bz2" compression="bzip2"
+            basedir="work/bundle" includes="downloads/**" />
+    </target>
+    <target name="save-cache-check">
+        <available file="work/bundle/downloads" type="dir" property="has.cachedir" />
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="work/bundle"/>
+
+        <!-- the jar will be relative to the lib directory -->
+        <manifestclasspath property="jar.classpath" jarfile="java4klauncher.jar">
+            <classpath>
+                <fileset refid="dist-libs" />
+            </classpath>
+        </manifestclasspath>
+
+        <jar destfile="work/bundle/java4klauncher.jar" basedir="work/classes"
+                index="true" duplicate="preserve"> 
+            <manifest>
+                <attribute name="Main-Class"
+                           value="net.javagaming.java4k.launcher.Java4kLauncher" />
+                <section name="net/javagaming/java4k/launcher/">
+                    <attribute name="Sealed" value="true"/>
+                </section>
+                <attribute name="Class-Path" value="${jar.classpath}" />
+            </manifest>
+
+            <!-- there seems to be an issue with the class loader not loading the jars. This is
+                 a hack.
+            -->
+            <!-- substance L&F -->
+            <zipfileset src="lib/substance-7.3-SNAPSHOT.jar" />
+            <zipfileset src="lib/laf-widget-7.3-SNAPSHOT.jar" />
+            <zipfileset src="lib/laf-plugin-7.3-SNAPSHOT.jar" />
+            <zipfileset src="lib/trident-7.3-SNAPSHOT.jar" />
+
+            <!-- tinyLAF -->
+            <!--
+            <zipfileset src="lib/tinylaf-1.4.0.jar" excludes="META-INF/**" />
+            -->
+        </jar>
+    </target>
+
+    <target name="assemble" depends="jar">
+        <mkdir dir="work/bundle"/>
+        <copy todir="work/bundle">
+            <fileset dir="bin">
+                <exclude name="java4k" />
+                <exclude name="java4k.bat" />
+            </fileset>
+            <fileset dir=".">
+                <include name="README.txt" />
+            </fileset>
+        </copy>
+        <fixcrlf srcdir="bin" destdir="work/bundle"
+                eol="unix"
+                includes="java4k" />
+        <fixcrlf srcdir="bin" destdir="work/bundle"
+                 eol="dos"
+                 includes="java4k.bat" />
+        <mkdir dir="work/bundle/lib" />
+        <copy todir="work/bundle/lib">
+            <!-- The libs are bundled in the jar, so don't copy these -->
+            <!--<fileset refid="dist-libs" />-->
+            <fileset refid="dist-libs-extra" />
+        </copy>
+    </target>
+
+    <target name="bundle" depends="assemble"
+            description="Create the distributable zip file for the tool.">
+        <zip basedir="work/bundle" destfile="work/java4k-launcher.zip"/>
+    </target>
+
+    <target name="test-compile" depends="compile">
+        <mkdir dir="work/test-classes"/>
+        <javac debug="true" includeJavaRuntime="true" includeAntRuntime="true"
+               fork="true" sourcepath="" srcdir="tests"
+               destdir="work/test-classes">
+            <classpath>
+                <pathelement location="work/classes"/>
+                <pathelement location="${junit.jar}"/>
+            </classpath>
+        </javac>
+        <jar destfile="work/tests.jar" basedir="work/test-classes"/>
+    </target>
+
+    <target name="test" depends="bundle, test-compile"
+            description="Run unit tests.">
+        <property name="debug" value=""/>
+        <mkdir dir="work/test-out"/>
+        <junit fork="true" dir="work/test-out">
+            <batchtest>
+                <fileset dir="work/test-classes" includes="**/*Test.class"/>
+            </batchtest>
+
+
+            <formatter type="plain" usefile="false"/>
+
+            <classpath>
+                <pathelement location="work/bundle/java4klauncher.jar"/>
+                <pathelement location="work/test-classes"/>
+                <pathelement location="${junit.jar}"/>
+            </classpath>
+
+            <sysproperty key="java.security.policy"
+                         file="resources/net/javagaming/java4k/launcher/developer.policy"/>
+            <sysproperty key="launcher.dir" file="work/bundle"/>
+            <jvmarg line="${debug}"/>
+        </junit>
+    </target>
+
+    <target name="debug"
+            description="Add remote debugging on port 8787 to the test target; add this target before the test target to enable.">
+        <property name="debug"
+                  value="-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"/>
+    </target>
+
+    <target name="debug-test" depends="debug, test"/>
+
+
+
+
+    <target name="prepare-installer" depends="init-installer">
+        <mkdir dir="work/install" />
+        <copy file="installer/jwrapper-installer.xml" todir="work/install">
+            <filterset>
+                <filter token="jwrapper.dir" value="${jwrapper.dir}" />
+                <filter token="basedir" value="${basedir}" />
+            </filterset>
+        </copy>
+    </target>
+
+    <target name="compile-installer" depends="prepare-installer">
+        <java jar="${jwrapper.dir}/jwrapper-${jwrapper.version}.jar" maxmemory="512m" fork="true"
+                dir="work/install">
+            <arg file="work/install/jwrapper-installer.xml" />
+        </java>
+    </target>
+
+
+
+    <target name="init-installer">
+        <property name="jwrapper.version" value="00023310637" />
+        <condition property="has.installer.files">
+            <and>
+                <available file="${jwrapper.dir}/JRE-1.7" type="dir" />
+                <available file="${jwrapper.dir}/jwrapper-${jwrapper.version}.jar" type="file" />
+            </and>
+        </condition>
+        
+        <fail unless="has.installer.files">
+Could not find the jWrapper files.  Please download the jWrapper jar and the
+JRE 1.7 bundle from:
+    http://www.jwrapper.com/download.html 
+and unzip the JRE 1.7 bundle into that directory.
+Then, set the Ant property "jwrapper.dir" to point to the download directory,
+and set the Ant property "jwrapper.version" to reference the downloaded jar
+version (defaults to ${jwrapper.version}).
+        </fail>
+    </target>
+
+</project>

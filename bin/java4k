@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -d "$JAVA_HOME" ]; then
+    JAVAEXE="$JAVA_HOME/bin/java"
+else
+    JAVAEXE="java"
+fi
+
+cd "$(dirname "$0")"
+"$JAVAEXE" -Dlauncher.dir="$PWD" -jar java4klauncher.jar $* || exit 1
+

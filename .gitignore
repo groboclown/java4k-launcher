@@ -1,3 +1,17 @@
+
+.project
+.classpath
+.idea
+.idea/*
+work/*
+.settings
+*.iml
+*/*.iml
+
+local.properties
+
+
+
 # Compiled class file
 *.class
 

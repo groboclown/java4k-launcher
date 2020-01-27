@@ -1,0 +1,39 @@
+
+=============================================================================
+FOR GAME DEVELOPERS:
+
+You will need Ant version 1.8 or higher, and a JDK version 1.6 or higher in
+order to compile and run the build yourself.
+
+
+Some top level commands you may use:
+
+$ ant clean
+
+    Delete all the generated files.
+
+
+$ ant main
+
+    Compile and bundle the tool.
+
+
+$ ant load-cache
+
+    Download the files from the java4k.com site into the bundle's cache.  This
+    can take a while, and limiters on the java4k.com site may restrict how much
+    you can download at once - it may take several attempts.
+
+
+For the application itself (java4k or java4k.bat), you can pass in the "-d"
+option (for "developer") to allow the application to load a local HTML file that
+includes an <applet> tag.  This will help you test your game to ensure it works
+with the launcher in its security sandbox.
+
+
+=============================================================================
+FOR LAUNCHER DEVELOPERS:
+
+
+You can pass a "-g" argument to the launcher to turn off the security manager
+to allow easier debugging via an IDE.

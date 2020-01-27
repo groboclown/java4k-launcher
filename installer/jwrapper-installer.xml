@@ -1,0 +1,41 @@
+<JWrapper>
+	
+	<!-- The name of the app bundle -->
+	<BundleName>Java4k Launcher</BundleName>
+	
+	<!-- The specification for one app within the bundle -->
+	<App>
+	  <Name>Java4k Launcher</Name>
+	  <LogoPNG>@basedir@/installer/java4k-splash.png</LogoPNG>
+	  <MainClass>net.javagaming.java4k.launcher.Java4kLauncher</MainClass>
+      <!--
+	  <Param>one</Param>
+      -->
+	</App>
+	
+	<SupportedLanguages>en</SupportedLanguages>
+	
+	<!-- App is a per-user app, it won't elevate and install for all users and the shared config folder will be per-user -->
+	<InstallType>CurrentUser</InstallType>
+	
+	<!-- Splash and Logo -->
+	<SplashPNG>@basedir@/installer/java4k-splash.png</SplashPNG>
+	<BundleLogoPNG>@basedir@/resources/net/javagaming/java4k/launcher/favicon.png</BundleLogoPNG>
+	
+	<!-- JVM options (e.g. extra memory) -->
+	<JvmOptions>
+	 <JvmOption>-Xmx256m</JvmOption>
+     <JvmOption>-Dlauncher.dir=.</JvmOption>
+	</JvmOptions>
+	
+	<!-- The JREs JWrapper should use for Windows, Linux32, Linux64... -->
+	<Windows32JRE>@jwrapper.dir@/JRE-1.7/win32/jre1.7.0_05</Windows32JRE>
+	<Windows64JRE>@jwrapper.dir@/JRE-1.7/win32/jre1.7.0_05</Windows64JRE>
+	<Linux32JRE>@jwrapper.dir@/JRE-1.7/linux/jre1.7.0_13</Linux32JRE>
+	<Linux64JRE>@jwrapper.dir@/JRE-1.7/linuxx64/jre1.7.0_13</Linux64JRE>
+	<Mac64JRE>@jwrapper.dir@/JRE-1.7/macos64/jre1.7.0_25</Mac64JRE>
+
+	<!-- The files that the app wants to bundle, here we have just one which is a JAR file and we specify that it should be on the launch classpath -->
+	<File classpath='yes'>@basedir@/work/bundle/java4klauncher.jar</File>
+	<File>@basedir@/work/bundle</File>
+</JWrapper>

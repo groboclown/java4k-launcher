@@ -1,0 +1,120 @@
+// ========== SYSTEM CODE PERMISSIONS =========================================
+
+
+// These permissions apply to javac
+grant codeBase "file:${java.home}/lib/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions
+grant codeBase "file:${java.home}/jre/lib/ext/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to javac when ${java.home] points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/../lib/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions when
+// ${java.home} points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/lib/ext/-" {
+        permission java.security.AllPermission;
+};
+
+
+// ========== LAUNCHER PERMISSIONS =========================================
+
+
+grant codeBase "file:${launcher.dir}/java4klauncher.jar" {
+    // Rather than granting all perimssions to the launcher, we can restrict it.
+    // These are only going to be in place while the launcher is running
+    // a sandboxed game.
+
+
+    // General applet permissions
+    permission java.lang.RuntimePermission "createClassLoader";
+    permission java.lang.RuntimePermission "closeClassLoader";
+    permission java.lang.RuntimePermission "setContextClassLoader";
+
+    // Pack200 permissions
+    permission java.util.PropertyPermission "com.sun.java.util.jar.pack.*", "read";
+
+    // WebStart permissions
+    permission java.lang.RuntimePermission "accessDeclaredMembers";
+
+    // File system access
+    permission java.io.FilePermission "${java.home}${/}lib${/}*", "read";
+
+    permission java.util.PropertyPermission "launcher.dir", "read";
+
+    permission java.io.FilePermission "${launcher.dir}${/}downloads", "read,write,delete";
+    permission java.io.FilePermission "${launcher.dir}${/}downloads${/}*", "read,write,delete";
+
+    permission java.io.FilePermission "${launcher.dir}${/}lib${/}*", "read";
+
+    // Used to create some URLs
+    permission java.lang.RuntimePermission "loadLibrary.mlib_image";
+    permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.util.PropertyPermission "java.protocol.handler.pkgs", "read";
+    permission java.util.PropertyPermission "http.maxRedirects", "read";
+    permission java.util.PropertyPermission "http.agent", "read";
+    permission java.util.PropertyPermission "http.auth.digest.validateProxy", "read";
+
+    // Allow the launcher to connect only to the java4k.com website to download
+    // the games.
+    permission java.net.SocketPermission "java4k.com:80", "connect, resolve";
+
+    // Used by ImageIO
+    permission java.io.FilePermission "${java.io.tmpdir}${/}*", "read,write,delete";
+    permission java.io.FilePermission "${java.home}/jre/bin/*", "read";
+
+    // Used to kill bad running threads
+    permission java.lang.RuntimePermission "modifyThread";
+
+    // Used by the Substance L&F
+    permission java.awt.AWTPermission "watchMousePointer";
+    permission java.util.PropertyPermission "user.dir", "read";
+    permission java.lang.RuntimePermission "accessDeclaredMembers";
+
+
+    // Prevent our own dialogs from showing an applet warning
+    permission java.awt.AWTPermission "showWindowWithoutWarningBanner";
+};
+
+grant codeBase "file:${launcher.dir}/lib/-" {
+    permission java.util.PropertyPermission "user.dir", "read";
+};
+
+
+
+// ========== APPLET PERMISSIONS =========================================
+grant {
+    // OS Specific properties to allow read access
+    permission java.util.PropertyPermission "os.name", "read";
+    permission java.util.PropertyPermission "os.version", "read";
+    permission java.util.PropertyPermission "os.arch", "read";
+    //permission java.util.PropertyPermission "file.separator", "read";
+    //permission java.util.PropertyPermission "path.separator", "read";
+    permission java.util.PropertyPermission "line.separator", "read";
+
+    // JVM properties to allow read access
+    permission java.util.PropertyPermission "java.version", "read";
+    permission java.util.PropertyPermission "java.vendor", "read";
+    permission java.util.PropertyPermission "java.vendor.url", "read";
+    permission java.util.PropertyPermission "java.class.version", "read";
+    permission java.util.PropertyPermission "java.specification.version", "read";
+    permission java.util.PropertyPermission "java.specification.vendor", "read";
+    permission java.util.PropertyPermission "java.specification.name", "read";
+
+    permission java.util.PropertyPermission "java.vm.specification.version", "read";
+    permission java.util.PropertyPermission "java.vm.specification.vendor", "read";
+    permission java.util.PropertyPermission "java.vm.specification.name", "read";
+    permission java.util.PropertyPermission "java.vm.version", "read";
+    permission java.util.PropertyPermission "java.vm.vendor", "read";
+    permission java.util.PropertyPermission "java.vm.name", "read";
+    
+    // Ability to play sound
+    permission javax.sound.sampled.AudioPermission "play";
+};
+ 

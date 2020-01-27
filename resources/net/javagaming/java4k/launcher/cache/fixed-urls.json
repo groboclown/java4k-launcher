@@ -1,0 +1,22 @@
+
+{
+    "about": "This file contains mappings between the URL as asked for by the websites, and the location it now resides on.",
+    "format": "Each entry in the 'map' is an array of 2 strings, the first is the requested URL, the second is the actual.  A null actual value means that we can't find the actual anywhere.  You can also use ${} formatted properties for dynamic settings.",
+    "map": [
+        [
+            "${url.game.baseurl}index.php?action=games&method=play&gid=182",
+            "https://mojang.com/notch/j4k/t4kns/t4kns.jnlp",
+            "t4kns (2008) JNLP file"
+        ],
+        [
+            "http://www.mojang.com/notch/j4k/t4kns/t4kns.jar",
+            "https://mojang.com/notch/j4k/t4kns/t4kns.jar",
+            "t4kns (2008) jar file; Java doesn't auto-redirect from http to https"
+        ],
+        [
+            "file:http://users.atw.hu/cppanddelphi/grasshopper4k",
+            "http://users.atw.hu/cppanddelphi/grasshopper4k",
+            "Grasshopper4k (2009) Jar file; the JNLP file has the wrong URI for the codebase."
+        ]
+    ]
+}
